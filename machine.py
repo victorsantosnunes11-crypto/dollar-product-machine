@@ -5,7 +5,7 @@ from datetime import datetime
 
 # Configura a IA
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-model = genai.GenerativeModel('gemini-pro')
+model = genai.GenerativeModel('gemini-1.5-flash')
 
 def create_product():
     print(f"🚀 Iniciando criação: {datetime.now()}")
