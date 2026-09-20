@@ -1,0 +1,35 @@
+name: 24h-Product-Machine
+on:
+  schedule:
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+
+jobs:
+  run-machine:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Create Product
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python machine.py
+
+      - name: Commit and Push
+        run: |
+          git config --global user.name "MachineBot"
+          git config --global user.email "bot@github.com"
+          git add products/*.pdf
+          git commit -m "New product generated" || echo "No changes"
+          git push
