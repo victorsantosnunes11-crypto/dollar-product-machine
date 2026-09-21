@@ -6,28 +6,26 @@ from datetime import datetime
 
 def create_product():
     os.makedirs('products', exist_ok=True)
-    
-    # Pega a chave do segredo do GitHub
     api_key = os.environ.get("GEMINI_API_KEY", "").strip()
     
-    # URL da API (usando a versão estável)
+    # Tentando a versão estável v1 que costuma aceitar chaves de projeto (AQ)
     url = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={api_key}"
     
     payload = {
         "contents": [{
-            "parts": [{"text": "Write a 500-word professional guide in English about productivity tips."}]
+            "parts": [{"text": "Write a 500-word guide about digital marketing in English."}]
         }]
     }
     
-    print("🚀 Chamando API...")
-    response = requests.post(url, json=payload)
+    headers = {'Content-Type': 'application/json'}
+    
+    print(f"🚀 Testando conexão com chave {api_key[:5]}...")
+    response = requests.post(url, headers=headers, json=payload)
     
     if response.status_code == 200:
         data = response.json()
-        # Extrai o texto
         text = data['candidates'][0]['content']['parts'][0]['text']
         
-        # Cria o PDF
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Arial", size=12)
@@ -36,10 +34,11 @@ def create_product():
         
         filename = f"products/product_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf"
         pdf.output(filename)
-        print(f"✅ SUCESSO! Arquivo criado: {filename}")
+        print(f"✅ SUCESSO! PDF criado: {filename}")
     else:
         print(f"❌ ERRO {response.status_code}: {response.text}")
-        raise Exception("Falha na API")
+        # Se der erro 404 aqui, a chave AQ não é compatível com esse método.
+        raise Exception("A chave AQ falhou. Precisamos da chave AIza.")
 
 if __name__ == "__main__":
     create_product()
