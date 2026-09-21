@@ -26,10 +26,12 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python machine.py
 
+      - name: Debug - List Files
+        run: ls -R # Mostra no log se a pasta products e o PDF existem
+
       - name: Commit and Push
         run: |
           git config --global user.name "MachineBot"
           git config --global user.email "bot@github.com"
-          git add products/ # Adiciona a pasta inteira, evita erro de wildcard
-          # Só faz o commit se houver arquivos novos para evitar erro 128
+          git add .
           git diff --quiet && git diff --staged --quiet || (git commit -m "New product generated" && git push)
