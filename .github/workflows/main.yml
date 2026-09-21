@@ -19,7 +19,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install requests fpdf2
 
       - name: Create Product
         env:
@@ -30,6 +30,6 @@ jobs:
         run: |
           git config --global user.name "MachineBot"
           git config --global user.email "bot@github.com"
-          git add products/*.pdf
-          git commit -m "New product generated" || echo "No changes"
-          git push
+          git add products/ # Adiciona a pasta inteira, evita erro de wildcard
+          # Só faz o commit se houver arquivos novos para evitar erro 128
+          git diff --quiet && git diff --staged --quiet || (git commit -m "New product generated" && git push)
